@@ -1,0 +1,59 @@
+#!<%= @shell %>
+# *************************************************************************
+osWlHome=<%= @os_wl_home %>
+osDomain=<%= @os_domain %>
+osDomainPath=<%= @os_domain_path %>
+nodeMgrPort=<%= @node_mgr_port %>
+hostname=<%= @node_mgr_address %>
+user=<%= @wls_user %>
+password=<%= @wls_password %>
+wlsAdminServer=<%= @wls_adminserver %>
+
+<% if @jsse_enabled == true %>
+export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true <%= @trust_env %>'
+<% else %>
+export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false <%= @trust_env %>'
+<% end %>
+
+echo "Starting Weblogic ${wlsAdminServer} for domain ${osDomain}...."
+echo "Checking if Weblogic ${wlsAdminServer} for domain ${osDomain} is already started...."
+echo "CONFIG_JVM_ARGS ${CONFIG_JVM_ARGS}"
+
+unamestr=`uname`
+unamestrversion=`uname -r`
+if [[ "$unamestr" == 'SunOS' ]]; then
+  if [[ "$unamestrversion" == '5.11' ]]; then
+     checkStmt='/bin/ps wwxa'
+  else
+     checkStmt='/usr/ucb/ps wwxa'
+  fi
+else
+  checkStmt='/bin/ps -eo pid,cmd'
+fi
+
+pid=`${checkStmt} | /bin/grep -i ${wlsAdminServer} | /bin/grep -i ${osDomain} | /bin/grep -v grep | awk '{print $1}'`
+nodePid=`${checkStmt} | /bin/grep -i nodemanager.javahome | /bin/grep -v grep | awk '{print $1}'`
+
+if [[ ${pid} ]]
+then
+  echo "The Weblogic ${wlsAdminServer} for domain ${osDomain} is already running...."
+  echo "Server NOT started again...."
+else
+  if [[ ${nodePid} ]]
+  then
+    echo "The Weblogic ${wlsAdminServer} for domain ${osDomain} is not running...."
+    echo "Starting Weblogic ${wlsAdminServer} for domain ${osDomain}...."
+    $osWlHome/common/bin/wlst.sh <<-EOF
+nmConnect('${user}','${password}','${hostname}','${nodeMgrPort}','${osDomain}','${osDomainPath}','ssl')
+nmStart('${wlsAdminServer}')
+nmServerStatus('${wlsAdminServer}')
+nmDisconnect()
+EOF
+
+    echo "The Weblogic ${wlsAdminServer} for domain ${osDomain} is starting...."
+  else
+    echo "NodeManager is not running on this machine ${hostname}"
+    echo "Start the NodeManager first"
+  fi
+fi
+echo "Done...."

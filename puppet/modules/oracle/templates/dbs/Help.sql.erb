@@ -1,0 +1,12 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Help.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on feedback on
+set linesize 80
+
+connect system/<%= @db_password %>
+@?/sqlplus/admin/pupbld.sql
+@?/sqlplus/admin/help/hlpbld.sql helpus.sql
+

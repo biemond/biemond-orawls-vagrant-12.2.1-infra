@@ -1,0 +1,15 @@
+select t.tablespace_name,
+       t.logging,
+       t.extent_management as EXTENT_MAN,
+       t.segment_space_management as SEGMEN,
+       t.bigfile as BIG,
+       f.file_name,
+       t.contents,
+       to_char(f.increment_by, '9999999999999999999') as increment_by,
+       to_char(t.block_size, '9999999999999999999') as block_size,
+       f.autoextensible as aut,
+       to_char(f.bytes, '9999999999999999999') as bytes,
+       to_char(f.maxbytes, '9999999999999999999') as max_size
+from   dba_tablespaces t, 
+       dba_data_files f 
+where  t.tablespace_name = f.tablespace_name

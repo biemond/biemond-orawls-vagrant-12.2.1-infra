@@ -1,0 +1,7 @@
+select 
+  v.volume_name,
+  v.volume_device,
+  v.size_mb as "SIZE",
+  d.name as DISKGROUP
+from v$asm_diskgroup d, v$asm_volume v
+where v.group_number = d.group_number

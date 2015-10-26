@@ -1,0 +1,15 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Xdb_Protocol.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+connect / as sysdba
+@?/rdbms/admin/catqm.sql change_on_install SYSAUX TEMP YES
+
+connect / as sysdba
+@?/rdbms/admin/catxdbj.sql
+@?/rdbms/admin/catrul.sql
+

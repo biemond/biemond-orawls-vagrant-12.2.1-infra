@@ -1,0 +1,11 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Cwmlite.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+connect / as sysdba
+@?/olap/admin/olap.sql SYSAUX TEMP
+

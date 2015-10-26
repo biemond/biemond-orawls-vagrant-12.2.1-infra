@@ -1,0 +1,16 @@
+The files in this directory should be seen as a series of sample scripts.
+The script containing a 'create database' is automatically supplied
+by the Oracle easy_type and does not need to be provided the type also
+provides the minimal database catalog consisting of 'catalog.sql' and 'catproc.sql'.
+When opting for a RAC based database, the 'catclust.sql' is also loaded and does not
+need to be specified by the other (optional) supplied configuration scripts.
+
+Any user specified script can be used as part of the confile_script list of files.
+
+Required '.erb' variables by these sample scripts are :
+  @oracle_base	-> f.e. '/opt/oracle'
+  @db_name	-> f.e. 'PROD01'
+  @db_password	-> f.e. 'Need_New_Password'
+
+Note: due to the nature the output is analyzed, either nothing or
+a comma separated string should be returned.

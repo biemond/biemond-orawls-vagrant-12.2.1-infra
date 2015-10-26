@@ -1,0 +1,7 @@
+spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Drop_DB.log append
+
+whenever sqlerror continue
+shutdown abort
+startup mount exclusive restrict
+
+drop database;

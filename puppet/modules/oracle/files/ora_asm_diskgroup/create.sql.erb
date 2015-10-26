@@ -1,0 +1,9 @@
+create diskgroup <%= groupname -%>
+  <%= redundancy_type -%> redundancy
+  <% disks.keys.each do | key| -%>
+    <% if redundancy_type != 'EXTERNAL' -%>failgroup <%= key -%> <% end -%> disk
+    <%= disks[key].collect {|e| "'#{e['path']}' name #{e['diskname']}"}.join(",\n") %>
+  <% end -%>
+  ATTRIBUTE
+    'compatible.asm' = '<%= compat_asm -%>',
+    'compatible.rdbms' = '<%= compat_rdbms -%>'

@@ -1,0 +1,8 @@
+The files in this directory are used to ccreate the basic database or destroy it.
+The create.sql.erb file contains contionals which are set in the ora_database easy_type which
+are in turn based to the values passed to from puppet when calling this custom type.
+
+After the initial bare database, the catalog & catproc modules are loaded, and when creating
+a RAC database, the catclust module is loaded too.
+
+This file should not be altered.

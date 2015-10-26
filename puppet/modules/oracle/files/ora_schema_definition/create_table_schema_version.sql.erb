@@ -1,0 +1,11 @@
+CREATE TABLE schema_version
+(  id                NUMBER                          CONSTRAINT nn_schema_version_id NOT NULL
+  ,application       VARCHAR2(255)                   CONSTRAINT nn_schema_version_application NOT NULL
+  ,version           VARCHAR2(255)                   CONSTRAINT nn_schema_version NOT NULL
+  ,description       VARCHAR2(255)                   CONSTRAINT nn_schema_version_description NOT NULL
+  ,installation_time TIMESTAMP(6)                    CONSTRAINT nn_schema_version_install_tijd NOT NULL
+);
+
+ENABLE ROW MOVEMENT;
+ALTER TABLE schema_version ADD (CONSTRAINT pk_schema_version PRIMARY KEY (application, version, description));
+ALTER TABLE schema_version ADD (CONSTRAINT schema_version_un UNIQUE (id))

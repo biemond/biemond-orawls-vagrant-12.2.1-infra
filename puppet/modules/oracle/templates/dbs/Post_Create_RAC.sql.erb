@@ -1,0 +1,26 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Post_Create_RAC.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+select group# from v$log where group# = 3;
+select group# from v$log where group# = 4;
+
+alter database add logfile thread 2 group 3 size 512M, group 4 size 512M;
+alter database enable public thread 2;
+
+alter system set cluster_database=true scope=spfile;
+alter system set remote_listener='<%= scan_name %>:<%= scan_port -%>' scope=spfile;
+
+<% if spfile_location -%>
+create spfile='<%= @spfile_location -%>/<%= @db_name %>/spfile<%= name -%>.ora' FROM pfile';
+<% end -%>
+
+shutdown immediate
+
+host srvctl enable database -d <%= @db_name %>
+host srvctl start database -d <%= @db_name %>
+

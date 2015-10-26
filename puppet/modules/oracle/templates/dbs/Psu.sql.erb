@@ -1,0 +1,16 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Psu.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+connect / as sysdba
+@?/rdbms/admin/xaview.sql
+@?/rdbms/admin/catbundle.sql psu apply
+
+select 'utl_recomp_begin: ' || to_char(sysdate, 'HH:MI:SS') from dual;
+execute utl_recomp.recomp_serial();
+select 'utl_recomp_end: ' || to_char(sysdate, 'HH:MI:SS') from dual;
+

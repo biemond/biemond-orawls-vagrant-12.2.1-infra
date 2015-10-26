@@ -1,0 +1,15 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/JServer.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+connect / as sysdba
+@?/javavm/install/initjvm.sql
+@?/xdk/admin/initxml.sql
+@?/xdk/admin/xmlja.sql
+@?/rdbms/admin/catjava.sql
+@?/rdbms/admin/catexf.sql
+

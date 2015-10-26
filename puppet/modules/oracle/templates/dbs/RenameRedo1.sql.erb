@@ -1,0 +1,49 @@
+rem
+rem This script renames the redolog extention from '.log' to '.rdo'
+rem This is an optional script.
+rem
+rem This SQL script is generated. In case of changes, do not
+rem change this sql script.
+rem
+
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/RenameRedo2.sql
+set linesize 1000 pagesize 0 trimspool on timing off 
+set termout off feedback off verify off heading off
+
+connect / as sysdba
+
+PROMPT
+PROMPT set linesize 1000
+PROMPT column member format a75
+PROMPT
+PROMPT spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/RenameRedo2.log append
+PROMPT connect / as sysdba
+PROMPT
+PROMPT select * from v$logfile
+PROMPT /
+PROMPT
+PROMPT shutdown immediate
+PROMPT startup mount
+PROMPT
+select 'host mv '||member||' '||substr(member,1,instr(member,'.'))||'rdo'
+from v$logfile
+/
+PROMPT
+select 'alter database rename file '''||member||''''
+       ||' to '''||substr(member,1,instr(member,'.'))||'rdo'';'
+from v$logfile
+/
+PROMPT
+PROMPT alter database open
+PROMPT /
+PROMPT
+PROMPT select * from v$logfile
+PROMPT /
+PROMPT
+PROMPT spool off
+PROMPT exit
+
+spool off
+
+@<%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/RenameRedo2.sql
+

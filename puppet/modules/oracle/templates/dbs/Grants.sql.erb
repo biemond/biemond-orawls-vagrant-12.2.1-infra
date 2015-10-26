@@ -1,0 +1,21 @@
+spool <%= @oracle_base -%>/admin/<%= @db_name -%>/scripts/log/Grants.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+connect / as sysdba
+
+Rem Grants for public use
+grant execute on sys.dbms_aq          to public;
+grant execute on sys.dbms_aqin        to public;
+grant execute on sys.dbms_aqadm       to public;
+grant execute on sys.dbms_aqjms       to public;
+grant execute on sys.dbms_job         to public;
+grant execute on sys.dbms_stats       to public;
+grant execute on sys.dbms_system      to public;
+grant execute on sys.dbms_transaction to public;
+grant execute on sys.dbms_utility     to public;
+

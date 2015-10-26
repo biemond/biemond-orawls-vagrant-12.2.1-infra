@@ -1,0 +1,115 @@
+spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Create_DB.log append
+Rem 
+Rem This SQL script is generated. In case of changes, do not change this sql script. 
+Rem
+
+set verify off echo on
+set linesize 80
+
+whenever sqlerror continue
+shutdown abort
+whenever sqlerror exit failure
+
+startup nomount pfile="<%= init_ora_file -%>"
+
+create database <%= name -%>
+<% if system_password -%>
+ user system identified by <%= system_password -%>
+<% end -%>
+<% if sys_password -%>
+ user sys identified by <%= system_password -%>
+<% end -%>
+<% if control_file -%>
+ controlfile  <%= control_file -%>
+<% end -%>
+<% if maxdatafiles -%>
+ maxdatafiles <%= maxdatafiles -%>
+<% end -%>
+<% if maxinstances -%>
+ maxinstances <%= maxinstances -%>
+<% end -%>
+<% if character_set -%>
+ character set <%= character_set -%>
+<% end -%>
+<% if national_character_set -%>
+ national character set <%= national_character_set -%>
+<% end -%>
+<% if tablespace_type -%>
+ set default <%= tablespace_type -%> tablespace
+<% end -%>
+<% if logfile -%>
+ logfile <%= logfile -%>
+<% end -%>
+<% if maxlogfiles -%>
+ maxlogfiles <%= maxlogfiles -%>
+<% end -%>
+<% if maxlogmembers -%>
+ maxlogmembers <%= maxlogmembers -%>
+<% end -%>
+<% if maxloghistory -%>
+ maxloghistory <%= maxloghistory -%>
+<% end -%>
+<% if archivelog == :enabled -%>
+ archivelog
+<% else -%>
+ noarchivelog <% -%>
+<% end -%>
+<% if timezone -%>
+ set time_zone = '<%= timezone -%>'
+<% end -%>
+<% if force_logging == :enabled -%>
+ force logging <% -%>
+<% end -%>
+<% if extent_management == :local -%>
+ extent management local <% -%>
+<% end -%>
+<%= [
+    logfile_groups,
+    datafiles, 
+    sysaux_datafiles, 
+    default_tablespace, 
+    default_temporary_tablespace, 
+    undo_tablespace
+  ].compact.join(' ') %>
+;
+
+set linesize 2048
+column ctl_files NEW_VALUE ctl_files
+
+select concat('control_files=''', concat(replace(value, ', ', ''','''), '''')) ctl_files
+from v$parameter where name ='control_files';
+
+host echo &ctl_files >> <%= init_ora_file %>
+
+<% if ! is_cluster? %>
+Rem create the spfile & new init<SID>.ora to reflect to location of the spfile.
+<% if spfile_location %>
+create spfile='<%= spfile_location -%>/spfile<%= name -%>.ora' from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= spfile_location -%>/spfile<%= name -%>.ora'" > <%= init_ora_file %>
+<% else -%>
+create spfile from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= oracle_home -%>/dbs/spfile<%= name -%>.ora'" > <%= init_ora_file %>
+<% end -%>
+<% else -%>
+host echo "cluster_database=true" >> <%= init_ora_file %>
+create spfile='<%= spfile_location -%>/<%= name -%>/spfile<%= name -%>.ora' from pfile;
+host mv <%= init_ora_file -%> <%= init_ora_file -%>.bck
+host echo "spfile='<%= spfile_location -%>/<%= name -%>/spfile<%= name -%>.ora'" > <%= init_ora_file %>
+<% end -%>
+
+spool off
+
+Rem The minimal required catalog
+spool <%= oracle_base -%>/admin/<%= name -%>/scripts/log/Catalog.log append
+@?/rdbms/admin/catalog
+@?/rdbms/admin/catproc
+<% if is_cluster? -%>
+@?/rdbms/admin/catclust
+<% end -%>
+
+shutdown immediate
+startup
+
+spool off

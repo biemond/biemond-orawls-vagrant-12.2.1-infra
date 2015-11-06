@@ -34,6 +34,21 @@ fmw_installations:
     fmw_file1:               "fmw_12.2.1.0.0_ohs_linux64_Disk1_1of1.zip"
     log_output:              true
     remote_file:             false
+  # 'forms1221':
+  #   fmw_product:             "forms"
+  #   fmw_file1:               "fmw_12.2.1.0.0_fr_linux64_Disk1_1of1.zip"
+  #   log_output:              true
+  #   remote_file:             false
+  # 'wcc1221':
+  #   fmw_product:             "wcc"
+  #   fmw_file1:               "fmw_12.2.1.0.0_wccontent_Disk1_1of1.zip"
+  #   log_output:              true
+  #   remote_file:             false
+  # 'wc1221':
+  #   fmw_product:             "wc"
+  #   fmw_file1:               "fmw_12.2.1.0.0_wcportal_Disk1_1of1.zip"
+  #   log_output:              true
+  #   remote_file:             false
   # 'b2b1221':
   #   fmw_product:             "b2b"
   #   fmw_file1:               "fmw_12.2.1.0.0_b2b_Disk1_1of1.zip"

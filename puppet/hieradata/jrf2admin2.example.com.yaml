@@ -78,12 +78,12 @@ domain_instances:
      development_mode:         true
      log_output:               *logoutput
      nodemanager_address:      "10.10.10.21"
+     webtier_enabled:          true
      # repository_database_url:  "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
      # repository_prefix:        "DEV"
      # repository_password:      "Welcome01"
      # repository_sys_password:  "Welcome01"
      # rcu_database_url:         "wlsdb.example.com:1521:wlsrepos.example.com"
-     webtier_enabled:          true
 
 wls_setting_instances:
   'default':
@@ -114,9 +114,6 @@ control_instances:
 
 # create password file for WLST utility
 userconfig_instances:
-  'adf_domain':
-     log_output:           *logoutput
-     user_config_dir:      '/home/oracle'
 
 authentication_provider_instances:
   'DefaultAuthenticator':

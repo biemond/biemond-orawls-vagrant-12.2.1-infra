@@ -3,7 +3,7 @@
 # install and configures the nodemanager
 #
 define orawls::nodemanager (
-  $version                               = hiera('wls_version'                   , 1111),  # 1036|1111|1211|1212|1213
+  $version                               = hiera('wls_version'                   , 1111),  # 1036|1111|1211|1212|1213|1221|12211
   $middleware_home_dir                   = hiera('wls_middleware_home_dir'), # /opt/oracle/middleware11gR1
   $weblogic_home_dir                     = hiera('wls_weblogic_home_dir'),
   $nodemanager_port                      = hiera('domain_nodemanager_port'       , 5556),
@@ -25,9 +25,11 @@ define orawls::nodemanager (
   $os_group                              = hiera('wls_os_group'), # dba
   $download_dir                          = hiera('wls_download_dir'), # /data/install
   $log_dir                               = hiera('wls_log_dir'                   , undef), # /data/logs
+  $log_file                              = 'nodemanager.log',
   $log_output                            = false, # true|false
   $sleep                                 = hiera('wls_nodemanager_sleep'         , 20), # default sleep time
   $properties                            = {},
+  $ohs_standalone                        = false,
 )
 {
 
@@ -37,11 +39,10 @@ define orawls::nodemanager (
     $domains_dir =  $wls_domains_dir
   }
 
-
   if ( $version == 1111 or $version == 1036 or $version == 1211 ) {
     $nodeMgrHome = "${weblogic_home_dir}/common/nodemanager"
     $startHome   = "${weblogic_home_dir}/server/bin"
-  } elsif $version == 1212 or $version == 1213 or $version == 1221 {
+  } elsif $version == 1212 or $version == 1213 or $version >= 1221 {
     $nodeMgrHome = "${domains_dir}/${domain_name}/nodemanager"
     $startHome   = "${domains_dir}/${domain_name}/bin"
   } else {
@@ -52,7 +53,7 @@ define orawls::nodemanager (
   $exec_path    = "${jdk_home_dir}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:"
 
   if $log_dir == undef {
-    $nodeMgrLogDir = "${nodeMgrHome}/nodemanager.log"
+    $nodeMgrLogDir = "${nodeMgrHome}/${log_file}"
   } else {
       # create all folders
       if !defined(Exec["create ${log_dir} directory"]) {
@@ -73,14 +74,15 @@ define orawls::nodemanager (
           owner   => $os_user,
           group   => $os_group,
           require => Exec["create ${log_dir} directory"],
+          before  => Exec["startNodemanager ${title}"],
         }
       }
-      $nodeMgrLogDir = "${log_dir}/nodemanager.log"
+      $nodeMgrLogDir = "${log_dir}/${log_file}"
   }
 
   case $::kernel {
     'Linux': {
-      if ( $version == 1212 or $version == 1213 or $version == 1221 ){
+      if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
         $checkCommand = "/bin/ps -ef | grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
       } else {
         $checkCommand = '/bin/ps -ef | grep -v grep | /bin/grep \'weblogic.NodeManager\''
@@ -93,14 +95,14 @@ define orawls::nodemanager (
     'SunOS': {
       case $::kernelrelease {
         '5.11': {
-          if ( $version == 1212 or $version == 1213 or $version == 1221 ){
+          if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
             $checkCommand = "/bin/ps wwxa | /bin/grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
           } else {
             $checkCommand = '/bin/ps wwxa | /bin/grep -v grep | /bin/grep \'weblogic.NodeManager\''
           }
         }
         default: {
-          if ( $version == 1212 or $version == 1213 or $version == 1221 ){
+          if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
             $checkCommand = "/usr/ucb/ps wwxa | /bin/grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
           } else {
             $checkCommand = '/usr/ucb/ps wwxa | /bin/grep -v grep | /bin/grep \'weblogic.NodeManager\''
@@ -163,11 +165,17 @@ define orawls::nodemanager (
       before  => Exec["startNodemanager ${title}"],
     }
   } else {
+    if $version >= 1221 {
+      $new_version = 1221
+    } else {
+      $new_version = $version
+    }
+
     file { "nodemanager.properties ux ${version} ${title}":
       ensure  => present,
       path    => "${nodeMgrHome}/nodemanager.properties",
       replace => true,
-      content => template("orawls/nodemgr/nodemanager.properties_${version}.erb"),
+      content => template("orawls/nodemgr/nodemanager.properties_${new_version}.erb"),
       owner   => $os_user,
       group   => $os_group,
       mode    => '0775',

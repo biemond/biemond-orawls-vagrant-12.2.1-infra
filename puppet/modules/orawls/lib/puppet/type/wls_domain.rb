@@ -21,10 +21,12 @@ module Puppet
     end
 
     on_create  do | command_builder |
+      wlst_action = 'create'
       fail('create of a domain is not allowed')
     end
 
     on_modify  do | command_builder |
+      wlst_action = 'modify'
       Puppet.info "modify #{name} "
       template('puppet:///modules/orawls/providers/wls_domain/modify.py.erb', binding)
     end
@@ -46,7 +48,9 @@ module Puppet
     property :log_number_of_files_limited
     property :log_filecount
     property :log_rotationtype
+    property :log_date_pattern
     property :log_rotate_logon_startup
+    property :log_domain_log_broadcast_severity
     property :jmx_platform_mbean_server_enabled
     property :jmx_platform_mbean_server_used
     property :web_app_container_show_archived_real_path_enabled
@@ -54,6 +58,8 @@ module Puppet
     property :setconfigurationaudittype
     property :setconfigbackupenabled
     property :setarchiveconfigurationcount
+    property :exalogicoptimizationsenabled
+    property :credential
 
     add_title_attributes(:weblogic_domain_name) do
       /^((.*\/)?(.*)?)$/

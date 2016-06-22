@@ -1,5 +1,11 @@
 # History
 
+## 0.5.2
+- update /usr/java/latest link to the latest jdk
+
+## 0.5.1
+- option to skip the creation of default java links and to set java alternatives/priorities
+
 ## 0.5.0
 - Refactored this module so it works with puppet4
 

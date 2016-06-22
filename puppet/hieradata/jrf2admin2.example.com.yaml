@@ -5,7 +5,7 @@ wls_weblogic_user:        &wls_weblogic_user        "weblogic"
 
 wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
 wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
-wls_version:              &wls_version              1221
+wls_version:              &wls_version              12211
 wls_domains_dir:          &wls_domains_dir          '/opt/oracle/wlsdomains/domains'
 wls_apps_dir:             &wls_apps_dir             '/opt/oracle/wlsdomains/applications'
 
@@ -31,7 +31,7 @@ logoutput:                     &logoutput                     true
 fmw_installations:
   'webtier1221':
     fmw_product:             "web"
-    fmw_file1:               "fmw_12.2.1.0.0_ohs_linux64_Disk1_1of1.zip"
+    fmw_file1:               "fmw_12.2.1.1.0_ohs_linux64_Disk1_1of1.zip"
     log_output:              true
     remote_file:             false
   # 'forms1221':
@@ -73,16 +73,16 @@ domain_user_key_file:       "/home/oracle/oracle-adf_domain-WebLogicKey.properti
 # create a standard domain
 domain_instances:
   'adf_domain':
-     # domain_template:          "adf_restricted"
-     domain_template:          "adf"
+     domain_template:          "adf_restricted"
+     # domain_template:          "adf"
      development_mode:         true
      log_output:               *logoutput
      nodemanager_address:      "10.10.10.21"
-     repository_database_url:  "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
-     repository_prefix:        "DEV"
-     repository_password:      "Welcome01"
-     repository_sys_password:  "Welcome01"
-     rcu_database_url:         "wlsdb.example.com:1521:wlsrepos.example.com"
+     # repository_database_url:  "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
+     # repository_prefix:        "DEV"
+     # repository_password:      "Welcome01"
+     # repository_sys_password:  "Welcome01"
+     # rcu_database_url:         "wlsdb.example.com:1521:wlsrepos.example.com"
      webtier_enabled:          true
 
 wls_setting_instances:
@@ -226,45 +226,45 @@ cluster_instances:
     require:
       - Wls_server[JmsWlsServer1]
 
-datasource_instances:
-    'tlogDS':
-      ensure:                      'present'
-      drivername:                  'oracle.jdbc.OracleDriver'
-      globaltransactionsprotocol:  'None'
-      initialcapacity:             '2'
-      jndinames:
-        - 'jdbc/tlogDS'
-      maxcapacity:                 '15'
-      target:
-        - 'WebServer1'
-        - 'JmsWlsServer1'
-      targettype:
-        - 'Server'
-        - 'Server'
-      testtablename:               'SQL SELECT 1 FROM DUAL'
-      url:                         "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
-      user:                        'tlog'
-      password:                    'tlog'
-      usexa:                       '1'
+# datasource_instances:
+#     'tlogDS':
+#       ensure:                      'present'
+#       drivername:                  'oracle.jdbc.OracleDriver'
+#       globaltransactionsprotocol:  'None'
+#       initialcapacity:             '2'
+#       jndinames:
+#         - 'jdbc/tlogDS'
+#       maxcapacity:                 '15'
+#       target:
+#         - 'WebServer1'
+#         - 'JmsWlsServer1'
+#       targettype:
+#         - 'Server'
+#         - 'Server'
+#       testtablename:               'SQL SELECT 1 FROM DUAL'
+#       url:                         "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
+#       user:                        'tlog'
+#       password:                    'tlog'
+#       usexa:                       '1'
 
-server_tlog_instances:
-  'JmsWlsServer1':
-      ensure:                      'present'
-      tlog_enabled:                'true'
-      tlog_datasource:             'tlogDS'
-      tlog_datasource_prefix:      'TLOG_JmsWlsServer1_'
-  'WebServer1':
-      ensure:                      'present'
-      tlog_enabled:                'true'
-      tlog_datasource:             'tlogDS'
-      tlog_datasource_prefix:      'TLOG_WebServer1_'
+# server_tlog_instances:
+#   'JmsWlsServer1':
+#       ensure:                      'present'
+#       tlog_enabled:                'true'
+#       tlog_datasource:             'tlogDS'
+#       tlog_datasource_prefix:      'TLOG_JmsWlsServer1_'
+#   'WebServer1':
+#       ensure:                      'present'
+#       tlog_enabled:                'true'
+#       tlog_datasource:             'tlogDS'
+#       tlog_datasource_prefix:      'TLOG_WebServer1_'
 
 # fmw cluster
 fmw_jrf_cluster_instances:
   'WebCluster':
      domain_name:          "adf_domain"
      jrf_target_name:      "WebCluster"
-     opss_datasource_name: "opss-data-source"
+     # opss_datasource_name: "opss-data-source"
      log_output:           *logoutput
 
 fmwlogdir_instances:

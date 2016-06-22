@@ -1,6 +1,11 @@
 # Oracle WebLogic orautils puppet module
 [![Build Status](https://travis-ci.org/biemond/biemond-orautils.png)](https://travis-ci.org/biemond/biemond-orautils)
 
+If you need support, checkout the [wls_install](https://www.enterprisemodules.com/shop/products/puppet-wls_install-module) and [wls_config](https://www.enterprisemodules.com/shop/products/puppet-wls_config-module) modules from [Enterprise Modules](https://www.enterprisemodules.com/)
+
+[![Enterprise Modules](https://raw.githubusercontent.com/enterprisemodules/public_images/master/banner1.jpg)](https://www.enterprisemodules.com)
+
+
 usage:
 
 change the params.pp class so the defaults match with your environment or add extra values based on the hostname

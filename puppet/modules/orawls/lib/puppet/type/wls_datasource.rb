@@ -21,11 +21,13 @@ module Puppet
     end
 
     on_create  do | command_builder |
+      wlst_action = 'create'
       Puppet.info "create #{name} "
       template('puppet:///modules/orawls/providers/wls_datasource/create.py.erb', binding)
     end
 
     on_modify  do | command_builder |
+      wlst_action = 'modify'
       Puppet.info "modify #{name} "
       template('puppet:///modules/orawls/providers/wls_datasource/modify.py.erb', binding)
     end
@@ -66,6 +68,10 @@ module Puppet
     property :rowprefetchsize
     property :initsql
     property :shrinkfrequencyseconds
+    property :wrapdatatypes
+    property :removeinfectedconnections
+    property :inactiveconnectiontimeoutseconds
+    property :connectionreservetimeoutseconds
 
     add_title_attributes(:datasource_name) do
       /^((.*\/)?(.*)?)$/

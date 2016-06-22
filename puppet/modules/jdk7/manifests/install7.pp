@@ -23,6 +23,10 @@ define jdk7::install7 (
   $urandom_java_fix            = true,
   $rsa_key_size_fix            = false,  # set true for weblogic 12.1.1 and jdk 1.7 > version 40
   $source_path                 = 'puppet:///modules/jdk7/',
+  $user                        = 'root',
+  $group                       = 'root',
+  $default_links               = true,
+  $install_alternatives        = true,
 ) {
 
   if ( $x64 == true ) {
@@ -36,8 +40,6 @@ define jdk7::install7 (
       $install_version   = 'linux'
       $install_extension = '.tar.gz'
       $path              = '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:'
-      $user              = 'root'
-      $group             = 'root'
     }
     default: {
       fail("Unrecognized operating system ${::kernel}, please use it on a Linux host")
@@ -99,6 +101,8 @@ define jdk7::install7 (
     alternatives_priority       => $alternatives_priority,
     user                        => $user,
     group                       => $group,
+    default_links               => $default_links,
+    install_alternatives        => $install_alternatives,
     require                     => File["${download_dir}/${jdk_file}"],
   }
 

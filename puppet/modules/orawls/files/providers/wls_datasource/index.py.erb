@@ -1,15 +1,7 @@
 
-
-def quote(text):
-    if text or text == '':
-        return "\"" + str(text).replace("\"", "\"\"") + "\""
-    else:
-        return ""
-
 m = ls('/JDBCSystemResources',returnMap='true')
 
-f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;target;targettype;drivername;jndinames;url;usexa;xaproperties;user;testtablename;globaltransactionsprotocol;extraproperties;maxcapacity;initialcapacity;domain;fanenabled;onsnodelist;mincapacity;statementcachesize;testconnectionsonreserve;secondstotrustidlepoolconnection;testfrequency;connectioncreationretryfrequency;rowprefetchenabled;rowprefetchsize;initsql;shrinkfrequencyseconds"
+f = open_file("name;target;targettype;drivername;jndinames;url;usexa;xaproperties;user;testtablename;globaltransactionsprotocol;extraproperties;maxcapacity;initialcapacity;domain;fanenabled;onsnodelist;mincapacity;statementcachesize;testconnectionsonreserve;secondstotrustidlepoolconnection;testfrequency;connectioncreationretryfrequency;rowprefetchenabled;rowprefetchsize;initsql;shrinkfrequencyseconds;wrapdatatypes;removeinfectedconnections;inactiveconnectiontimeoutseconds;connectionreservetimeoutseconds")
 for token in m:
     print '___'+token+'___'
     cd('/JDBCSystemResources/'+token + '/JDBCResource/' + token)
@@ -23,7 +15,6 @@ for token in m:
         url      = get('Url')
         driver   = get('DriverName')
         usexa    = str(get('UseXaDataSourceInterface'))
-        #password = get('Password')
 
         cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCConnectionPoolParams/' + token )
         maxcapacity     = get('MaxCapacity')
@@ -38,11 +29,29 @@ for token in m:
            statementcachesize   = '0'
         testconnectionsonreserve = str(get('TestConnectionsOnReserve'))
 
+        inactiveconnectiontimeoutseconds = get('InactiveConnectionTimeoutSeconds')
+        if not (inactiveconnectiontimeoutseconds):
+          inactiveconnectiontimeoutseconds = '0'
+
+        connectionreservetimeoutseconds = get('ConnectionReserveTimeoutSeconds')
+        if not (connectionreservetimeoutseconds):
+          connectionreservetimeoutseconds = '0'
+
         shrinkfrequencyseconds = str(get('ShrinkFrequencySeconds'))
         secondstotrustidlepoolconnection = str(get('SecondsToTrustAnIdlePoolConnection'))
         testfrequency = get('TestFrequencySeconds')
         connectioncreationretryfrequency = str(get('ConnectionCreationRetryFrequencySeconds'))
         initsql = str(get('InitSql'))
+
+        if get('WrapTypes'):
+          wrapdatatypes = '1'
+        else:
+          wrapdatatypes = '0'
+
+        if get('RemoveInfectedConnections'):
+          removeinfectedconnections = '1'
+        else:
+          removeinfectedconnections = '0'
 
         cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDataSourceParams/' + token )
         jndinames = get('JNDINames')
@@ -102,13 +111,7 @@ for token in m:
         else:
             xapropertiesCur = ''
 
-        n = ls('/SystemResources/'+token+'/Targets',returnMap='true')
-        target     = []
-        targetType = []
-        for token2 in n:
-               target.append(token2)
-               cd('/SystemResources/'+token+'/Targets/'+token2)
-               targetType.append(get('Type'))
+        target, targetType = retrieve_target_list('/SystemResources/'+token)
 
         tagged = []
         i = ls('/Servers/', returnMap='true')
@@ -133,10 +136,10 @@ for token in m:
                 missing = 1
 
         if not tagged:
-            print >>f, ";".join(map(quote, [domain+'/'+token,','.join(target),','.join(targetType),driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds]))
+            add_index_entry(f, [domain+'/'+token,','.join(target),','.join(targetType),driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds, wrapdatatypes, removeinfectedconnections, inactiveconnectiontimeoutseconds, connectionreservetimeoutseconds])
         elif missing == 0:
-            print >>f, ";".join(map(quote, [domain+'/'+token,'inherited','inherited',driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds]))
+            add_index_entry(f, [domain+'/'+token,'inherited','inherited',driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds, wrapdatatypes, removeinfectedconnections, inactiveconnectiontimeoutseconds, connectionreservetimeoutseconds])
         else:
-            print >>f, ";".join(map(quote, [domain+'/'+token,'not_inherited','not_inherited',driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds]))
+            add_index_entry(f, [domain+'/'+token,'not_inherited','not_inherited',driver,','.join(jndinames),url,usexa,xapropertiesCur,user,testTableName,globalTransactionsProtocol,','.join(properties),maxcapacity,initialcapacity,domain,fanenabled,onsnodelist,mincapacity,statementcachesize,testconnectionsonreserve,secondstotrustidlepoolconnection,testfrequency,connectioncreationretryfrequency,rowprefetchenabled,rowprefetchsize,initsql,shrinkfrequencyseconds, wrapdatatypes, removeinfectedconnections, inactiveconnectiontimeoutseconds, connectionreservetimeoutseconds])
 f.close()
-print "~~~~COMMAND SUCCESFULL~~~~"
+report_back_success()

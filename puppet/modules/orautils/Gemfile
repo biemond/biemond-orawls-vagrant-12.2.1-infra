@@ -10,3 +10,5 @@ gem 'puppetlabs_spec_helper'
 gem 'puppet-syntax'
 gem 'puppet-blacksmith'
 
+gem 'fog', '>= 1.25.0'
+gem 'fog-google', '= 0.1.0'

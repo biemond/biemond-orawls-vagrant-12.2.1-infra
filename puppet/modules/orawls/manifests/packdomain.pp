@@ -22,7 +22,7 @@ define orawls::packdomain (
     $domains_dir =  $wls_domains_dir
   }
 
-  if ( $version == 1221 ) {
+  if ( $version >= 1221 ) {
     $bin_dir = "${middleware_home_dir}/oracle_common/common/bin/pack.sh"
   } else {
     $bin_dir = "${weblogic_home_dir}/common/bin/pack.sh"
@@ -32,11 +32,12 @@ define orawls::packdomain (
   $packCommand = "${bin_dir} -domain=${domains_dir}/${domain_name} -template=${download_dir}/domain_${domain_name}.jar -template_name=domain_${domain_name} -log=${download_dir}/domain_${domain_name}.log -log_priority=INFO"
 
   exec { "pack domain ${domain_name} ${title}":
-    command   => $packCommand,
-    creates   => "${download_dir}/domain_${domain_name}.jar",
-    path      => $exec_path,
-    user      => $os_user,
-    group     => $os_group,
-    logoutput => $log_output,
+    command     => $packCommand,
+    creates     => "${download_dir}/domain_${domain_name}.jar",
+    path        => $exec_path,
+    user        => $os_user,
+    group       => $os_group,
+    logoutput   => $log_output,
+    environment => "JAVA_HOME=${jdk_home_dir}",
   }
 }

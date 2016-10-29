@@ -53,19 +53,19 @@ change_server_arguments(ADMIN_SERVER, ADM_JAVA_ARGUMENTS)
 cd('/')
 
 <% if @apps_dir %>
-setOption('AppDir', APP_PATH )
+setOption('AppDir', APP_PATH)
 <% end %>
 
 print 'Adding EM Template'
 addTemplate('<%= @templateEM %>')
 
-dumpStack();
+dumpStack()
 
 print 'Extend...osb domain with template <%= @templateOSB %>'
 addTemplate('<%= @templateWS %>')
 addTemplate('<%= @templateOSB %>')
 
-if WEBLOGIC_VERSION in [1036, 1111] and OWSM_ENABLED == true:
+if WEBLOGIC_VERSION in [1036, 1111] and OWSM_ENABLED == True:
     print 'Adding JRF Template'
     try:
         addTemplate('<%= @templateJRF %>')
@@ -86,16 +86,16 @@ if WEBLOGIC_VERSION in [1036, 1111] and OWSM_ENABLED == true:
 print 'weblogic version' + str(WEBLOGIC_VERSION)
 
 <% if @apps_dir %>
-setOption('AppDir', APP_PATH )
+setOption('AppDir', APP_PATH)
 <% end %>
 
 print 'change osb_server1'
 cd('/')
 change_managed_server('osb_server1', 'LocalMachine', '<%= @adminserver_address %>', 8011, OSB_JAVA_ARGUMENTS, '<%= @osb_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
 
-if WEBLOGIC_VERSION in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION in [1213, 1221, 12211, 12212]:
 
-    if WEBTIER_ENABLED == true:
+    if WEBTIER_ENABLED == True:
         print 'Adding OHS Template'
         addTemplate('<%= @templateOHS %>')
 
@@ -104,7 +104,7 @@ if WEBLOGIC_VERSION in [1213, 1221, 12211]:
     # print 'Add JAX-WS SOAP over JMS Template'
     # addTemplate('<%= @templateSoapJms %>')
 
-    if ESS_ENABLED == true:
+    if ESS_ENABLED == True:
         print 'Adding ESS Template'
         addTemplate('<%= @templateESS %>')
         addTemplate('<%= @templateESS_EM %>')
@@ -112,7 +112,6 @@ if WEBLOGIC_VERSION in [1213, 1221, 12211]:
         print 'change ess_server1'
         cd('/')
         change_managed_server('ess_server1', 'LocalMachine', '<%= @adminserver_address %>', 8201, ESS_JAVA_ARGUMENTS, '<%= @ess_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
-
 
     print 'Change datasources'
 
@@ -128,7 +127,7 @@ if WEBLOGIC_VERSION in [1213, 1221, 12211]:
     print 'end datasources'
 
     print 'Add server groups WSM-CACHE-SVR WSMPM-MAN-SVR JRF-MAN-SVR to AdminServer'
-    serverGroup = ['WSM-CACHE-SVR' , 'WSMPM-MAN-SVR' , 'JRF-MAN-SVR']
+    serverGroup = ['WSM-CACHE-SVR', 'WSMPM-MAN-SVR', 'JRF-MAN-SVR']
     setServerGroups(ADMIN_SERVER, serverGroup)
 
     print 'Add server group OSB-MGD-SVRS-COMBINED to osb_server1'
@@ -141,17 +140,17 @@ if WEBLOGIC_VERSION in [1213, 1221, 12211]:
 
     print 'end server groups'
 
-dumpStack();
+dumpStack()
 updateDomain()
 
 closeDomain()
 
 create_boot_properties_file(DOMAIN_PATH + '/servers/osb_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
 
-if WEBLOGIC_VERSION in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION in [1213, 1221, 12211, 12212]:
 
-  if ESS_ENABLED == true:
-    create_boot_properties_file(DOMAIN_PATH + '/servers/ess_server1/security' , 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
+    if ESS_ENABLED == True:
+        create_boot_properties_file(DOMAIN_PATH + '/servers/ess_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
 
 
 print 'Exiting...'

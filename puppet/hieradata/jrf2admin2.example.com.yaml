@@ -5,7 +5,7 @@ wls_weblogic_user:        &wls_weblogic_user        "weblogic"
 
 wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
 wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
-wls_version:              &wls_version              12211
+wls_version:              &wls_version              12212
 wls_domains_dir:          &wls_domains_dir          '/opt/oracle/wlsdomains/domains'
 wls_apps_dir:             &wls_apps_dir             '/opt/oracle/wlsdomains/applications'
 
@@ -31,7 +31,7 @@ logoutput:                     &logoutput                     true
 fmw_installations:
   'webtier1221':
     fmw_product:             "web"
-    fmw_file1:               "fmw_12.2.1.1.0_ohs_linux64_Disk1_1of1.zip"
+    fmw_file1:               "fmw_12.2.1.2.0_ohs_linux64_Disk1_1of1.zip"
     log_output:              true
     remote_file:             false
   # 'forms1221':

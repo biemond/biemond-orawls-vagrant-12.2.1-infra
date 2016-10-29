@@ -71,9 +71,9 @@ addTemplate('<%= @templateOSB %>')
 print 'Adding ApplCore Template'
 addTemplate('<%= @templateApplCore %>')
 
-if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
-    #print 'Adding JRF Template'
-    #addTemplate('<%= @templateJRF %>')
+if WEBLOGIC_VERSION not in [1213, 1221, 12211, 12212]:
+    # print 'Adding JRF Template'
+    # addTemplate('<%= @templateJRF %>')
     print 'Adding WSM PM Template'
     addTemplate('<%= @templateWSMPM %>')
 
@@ -88,11 +88,11 @@ if BPM_ENABLED == True:
     print 'Adding BPM Template'
     addTemplate('<%= @templateBPM %>')
 
-if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION not in [1213, 1221, 12211, 12212]:
     print 'Adding EM Template'
     addTemplate('<%= @templateEM %>')
 
-if WEBLOGIC_VERSION in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION in [1213, 1221, 12211, 12212]:
 
     if WEBTIER_ENABLED == True:
         print 'Adding OHS Template'
@@ -110,20 +110,20 @@ if WEBLOGIC_VERSION in [1213, 1221, 12211]:
 dumpStack()
 
 
-if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION not in [1213, 1221, 12211, 12212]:
     cd('/')
     # destroy the normal one
-    delete('LocalMachine','Machine')
+    delete('LocalMachine', 'Machine')
     print 'change the default machine LocalMachine with type Machine'
     create_machine('UnixMachine', 'LocalMachine', '<%= @adminserver_address %>', NODEMANAGER_SECURE_LISTENER)
 
 print 'Change AdminServer'
-cd('/Servers/'+ADMIN_SERVER)
-set('Machine','LocalMachine')
+cd('/Servers/' + ADMIN_SERVER)
+set('Machine', 'LocalMachine')
 
 
 <% if @apps_dir %>
-setOption('AppDir', APP_PATH )
+setOption('AppDir', APP_PATH)
 <% end %>
 
 print 'change soa_server1'
@@ -131,19 +131,19 @@ cd('/')
 change_managed_server('soa_server1', 'LocalMachine', '<%= @adminserver_address %>', 8001, SOA_JAVA_ARGUMENTS, '<%= @soa_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
 
 if BAM_ENABLED == True:
-  print 'change bam_server1'
-  cd('/')
-  change_managed_server('bam_server1', 'LocalMachine', '<%= @adminserver_address %>', 9001, BAM_JAVA_ARGUMENTS, '<%= @bam_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
+    print 'change bam_server1'
+    cd('/')
+    change_managed_server('bam_server1', 'LocalMachine', '<%= @adminserver_address %>', 9001, BAM_JAVA_ARGUMENTS, '<%= @bam_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
 
 print 'change osb_server1'
 cd('/')
 change_managed_server('osb_server1', 'LocalMachine', '<%= @adminserver_address %>', 8011, OSB_JAVA_ARGUMENTS, '<%= @osb_nodemanager_log_dir %>', JAVA_HOME, JSSE_ENABLED)
 
 
-### only for 11g
+# only for 11g
 print 'weblogic version' + str(WEBLOGIC_VERSION)
 
-if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION not in [1213, 1221, 12211, 12212]:
 
     print 'create opss datasource'
 
@@ -154,7 +154,7 @@ if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
 
     create_opss_datasource(target, REPOS_DBUSER_PREFIX, REPOS_DBPASSWORD, REPOS_DBURL)
 
-if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION not in [1213, 1221, 12211, 12212]:
 
     print 'Change datasources'
     change_datasource('EDNDataSource', REPOS_DBUSER_PREFIX + '_SOAINFRA', REPOS_DBPASSWORD, REPOS_DBURL)
@@ -173,7 +173,7 @@ if WEBLOGIC_VERSION not in [1213, 1221, 12211]:
 
 print 'weblogic version' + str(WEBLOGIC_VERSION)
 
-if WEBLOGIC_VERSION in [1213, 1221, 12211]:
+if WEBLOGIC_VERSION in [1213, 1221, 12211, 12212]:
 
     print 'Change datasources'
 
@@ -224,8 +224,8 @@ closeDomain()
 
 create_boot_properties_file(DOMAIN_PATH + '/servers/soa_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
 
-if BAM_ENABLED == True:
-  create_boot_properties_file(DOMAIN_PATH + '/servers/bam_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
+if BAM_ENABLED is True:
+    create_boot_properties_file(DOMAIN_PATH + '/servers/bam_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
 
 create_boot_properties_file(DOMAIN_PATH + '/servers/osb_server1/security', 'boot.properties', ADMIN_USER, ADMIN_PASSWORD)
 
